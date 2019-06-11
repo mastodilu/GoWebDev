@@ -8,7 +8,17 @@
     <h1>Una persona<h1>
     {{range $shish := .}}
       <div>
-        <p>Name: {{$shish.Name}}</p>
+        <p>Name: {{$shish.Names}}</p>
+        <p>Age: {{$shish.Age}}</p>
+      </div>
+    {{end}}
+
+    {{/* range over the internal slice of string */}}
+    {{range $shish := .}}
+      <div>
+        {{range $name := $shish.Names}}
+          <p>{{$name}}</p>
+        {{end}}
         <p>Age: {{$shish.Age}}</p>
       </div>
     {{end}}

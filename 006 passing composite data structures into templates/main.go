@@ -47,12 +47,12 @@ func main() {
 
 	//slice di struct (anonime)
 	slicestruct := []struct {
-		Name string
-		Age  int
+		Names []string
+		Age   int
 	}{
-		{"matteo", 25},
-		{"alberto", 28},
-		{"pollo", 12},
+		{[]string{"aa", "bb", "cc"}, 25},
+		{[]string{"dd", "ee", "ff"}, 28},
+		{[]string{"gg", "hh", "ii"}, 12},
 	}
 	tpl.ExecuteTemplate(os.Stdout, "sliceStruct.gohtml", slicestruct)
 	mylib.IfErrThenLogFatal(err, "can't execute sliceStruct template")

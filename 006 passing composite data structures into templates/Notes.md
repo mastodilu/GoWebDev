@@ -166,3 +166,62 @@ E' possibile dare un nome alla variabile sul quale si cicla usando la sintassi:
     </div>
 {{end}}
 ```
+
+---
+
+### Slice di struct con slice interna alla struct
+
+#### script
+
+```Go
+//slice di struct (anonime)
+slicestruct := []struct {
+    Names []string
+    Age   int
+}{
+    {[]string{"aa", "bb", "cc"}, 25},
+    {[]string{"dd", "ee", "ff"}, 28},
+    {[]string{"gg", "hh", "ii"}, 12},
+}
+tpl.ExecuteTemplate(os.Stdout, "sliceStruct.gohtml", slicestruct)
+mylib.IfErrThenLogFatal(err, "can't execute sliceStruct template")
+```
+
+#### template
+
+L'output di `{{range .}}` diventa l'input per comporre i vari `{{.Name}}` e `{{.Age}}`
+
+```gohtml
+{{/* range over the internal slice of string */}}
+{{range $shish := .}}
+    <div>
+    {{range $name := $shish.Names}}
+        <p>{{$name}}</p>
+    {{end}}
+    <p>Age: {{$shish.Age}}</p>
+    </div>
+{{end}}
+```
+
+#### output
+
+```html
+<div>
+    <p>aa</p>
+    <p>bb</p>
+    <p>cc</p>
+<p>Age: 25</p>
+</div>
+<div>
+    <p>dd</p>
+    <p>ee</p>
+    <p>ff</p>
+<p>Age: 28</p>
+</div>
+<div>
+    <p>gg</p>
+    <p>hh</p>
+    <p>ii</p>
+<p>Age: 12</p>
+</div>
+```
