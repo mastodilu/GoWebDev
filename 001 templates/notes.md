@@ -46,3 +46,5 @@ ifErrThenLogFatal(err, "can't parse all those ugly templates")
 err = mytemplate.ExecuteTemplate(os.Stdout, "one.gohtml", nil)
 ifErrThenLogFatal(err, "can't write one.txt to os.Stdout")
 ```
+
+Il nome del template specificato è il base name del file parsato e non path/../basename

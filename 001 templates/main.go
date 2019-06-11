@@ -33,11 +33,6 @@ func main() {
 	ifErrThenLogFatal(err, "can't create homepage.html")
 	defer homepage.Close()
 
-	// execute prende un io.Writer e dei dati (o nil)
-	// questo stampa nel terminale il template parsificato
-	//err = mytemplate.Execute(os.Stdout, nil)
-	//ifErrThenLogFatal(err, "can't execute templates")
-
 	// scrive il template nel file homepage.html
 	err = mytemplate.Execute(homepage, nil)
 	ifErrThenLogFatal(err, "can't write to output file")
@@ -46,15 +41,8 @@ func main() {
 	mytemplate, err = template.ParseFiles(templatesFolder+"/one.gohtml", templatesFolder+"/two.gohtml")
 	ifErrThenLogFatal(err, "can't parse all those ugly templates")
 
-	// apro i file in cui scrivere i template
-	// one, err := os.Open("./pages/one.txt")
-	//ifErrThenLogFatal(err, "can't create one.txt")
-	//two, err := os.Open("./pages/two.py")
-	//ifErrThenLogFatal(err, "can't create two.html")
-	//three, err := os.Open("./three.shish")
-	//ifErrThenLogFatal(err, "can't create three.yeah")
-
 	//per scrivere su io.Reader uno specifico template quando ce ne sono tanti si usa ExecuteTemplate
+	//	attento al nome specificato perchè non corrisponde al path, ma al base name
 	err = mytemplate.ExecuteTemplate(os.Stdout, "one.gohtml", nil)
 	ifErrThenLogFatal(err, "can't write one.txt to os.Stdout")
 
