@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>FuncMap</title>
+  </head>
+  <body>
+    <h1>FuncMap hands on</h1>
+    {{range .}}
+    <p>{{firstthree (toupper .)}}</p>
+    {{end}}
+    <p>{{sayhi}}</p>
+    <p>1+2 = {{sum 1 2}}</p>
+    <p>aBC --> {{toupper "aBC"}}</p>
+    <p></p>
+  </body>
+</html>
