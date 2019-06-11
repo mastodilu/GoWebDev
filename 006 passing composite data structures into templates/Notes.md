@@ -99,3 +99,70 @@ output
     <p>Age: 25</p>
 </div>
 ```
+
+---
+
+### Slice di struct
+
+Per accedere al campo della struct si usa la sintassi `{{.nome_campo}}`
+
+#### script
+
+```Go
+//struct (struct anonima)
+//slice di struct (anonime)
+slicestruct := []struct {
+    Name string
+    Age  int
+}{
+    {"matteo", 25},
+    {"alberto", 28},
+    {"pollo", 12},
+}
+tpl.ExecuteTemplate(os.Stdout, "sliceStruct.gohtml", slicestruct)
+mylib.IfErrThenLogFatal(err, "can't execute sliceStruct template")
+```
+
+#### template
+
+L'output di `{{range .}}` diventa l'input per comporre i vari `{{.Name}}` e `{{.Age}}`
+
+```gohtml
+{{range .}}
+    <div>
+        <p>Name: {{.Name}}</p>
+        <p>Age: {{.Age}}</p>
+    </div>
+{{end}}
+```
+
+#### output
+
+```html
+<div>
+    <p>Name: matteo</p>
+    <p>Age: 25</p>
+</div>
+
+<div>
+    <p>Name: alberto</p>
+    <p>Age: 28</p>
+</div>
+
+<div>
+    <p>Name: pollo</p>
+    <p>Age: 12</p>
+</div>
+```
+
+E' possibile dare un nome alla variabile sul quale si cicla usando la sintassi:
+`{{range $nome_var := .}}`
+
+```Gohtml
+{{range $shish := .}}
+    <div>
+        <p>Name: {{$nome_var.Name}}</p>
+        <p>Age: {{$nome_var.Age}}</p>
+    </div>
+{{end}}
+```

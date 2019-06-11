@@ -42,4 +42,18 @@ func main() {
 	}
 	err = tpl.ExecuteTemplate(os.Stdout, "struct.gohtml", mystruct)
 	mylib.IfErrThenLogFatal(err, "can't execute struct template")
+
+	fmt.Println("\n------------")
+
+	//slice di struct (anonime)
+	slicestruct := []struct {
+		Name string
+		Age  int
+	}{
+		{"matteo", 25},
+		{"alberto", 28},
+		{"pollo", 12},
+	}
+	tpl.ExecuteTemplate(os.Stdout, "sliceStruct.gohtml", slicestruct)
+	mylib.IfErrThenLogFatal(err, "can't execute sliceStruct template")
 }

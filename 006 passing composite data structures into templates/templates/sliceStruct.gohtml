@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>TITOLONE</title>
+  </head>
+  <body>
+    <h1>Una persona<h1>
+    {{range $shish := .}}
+      <div>
+        <p>Name: {{$shish.Name}}</p>
+        <p>Age: {{$shish.Age}}</p>
+      </div>
+    {{end}}
+  </body>
+</html>
