@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"mylib"
 	"os"
 	"text/template"
 )
@@ -15,35 +15,29 @@ import (
 		un pointer a template è come un container in cui i file sono parsificati e tenuti
 */
 
-func ifErrThenLogFatal(err error, msg ...string) {
-	if err != nil {
-		log.Fatalln(msg, err)
-	}
-}
-
 func main() {
 	templatesFolder := "./pages/templates"
 
 	//mytemplate è un puntatore a template, un contenitore di tutti i template che gli ho fatto parsificare
 	mytemplate, err := template.ParseFiles(templatesFolder + "/htmlpage.gohtml")
-	ifErrThenLogFatal(err, "can't parse files")
+	mylib.IfErrThenLogFatal(err, "can't parse files")
 
 	//crea il file homepage.html in cui scrivere il template
 	homepage, err := os.Create("./pages/out/homepage.html")
-	ifErrThenLogFatal(err, "can't create homepage.html")
+	mylib.IfErrThenLogFatal(err, "can't create homepage.html")
 	defer homepage.Close()
 
 	// scrive il template nel file homepage.html
 	err = mytemplate.Execute(homepage, nil)
-	ifErrThenLogFatal(err, "can't write to output file")
+	mylib.IfErrThenLogFatal(err, "can't write to output file")
 
 	//parsing di molti template
 	mytemplate, err = template.ParseFiles(templatesFolder+"/one.gohtml", templatesFolder+"/two.gohtml")
-	ifErrThenLogFatal(err, "can't parse all those ugly templates")
+	mylib.IfErrThenLogFatal(err, "can't parse all those ugly templates")
 
 	//per scrivere su io.Reader uno specifico template quando ce ne sono tanti si usa ExecuteTemplate
 	//	attento al nome specificato perchè non corrisponde al path, ma al base name
 	err = mytemplate.ExecuteTemplate(os.Stdout, "one.gohtml", nil)
-	ifErrThenLogFatal(err, "can't write one.txt to os.Stdout")
+	mylib.IfErrThenLogFatal(err, "can't write one.txt to os.Stdout")
 
 }
