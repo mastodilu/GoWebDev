@@ -1,6 +1,6 @@
 # Notes
 
-## Come passare composite data structures ad un template.
+## Come passare composite data structures ad un template
 
 script
 
@@ -28,3 +28,15 @@ output
     <li>three</li>
 </ul>
 ```
+
+---
+
+Ad ogni iterazione di
+
+```
+{{range .}} // <-- range over the slice
+    {{.}}   // <-- current field of the slice
+{{end}}
+```
+
+`{{.}}` contiene il valore del dato all'iterazione corrente.

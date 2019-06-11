@@ -13,5 +13,10 @@
         <li>{{.}}</li>
       {{end}}
     </ul>
+    <ul>
+      {{range $index, $element := .}}
+        <li>{{$index}} - {{$element}}</li>
+      {{end}}
+    </ul>
   </body>
 </html>
