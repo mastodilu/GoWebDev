@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"mylib"
 	"os"
@@ -13,7 +14,17 @@ func init() {
 var tpl *template.Template
 
 func main() {
-	myData := []string{"one", "two", "three"}
-	err := tpl.ExecuteTemplate(os.Stdout, "one.gohtml", myData)
+	mySlice := []string{"one", "two", "three"}
+	err := tpl.ExecuteTemplate(os.Stdout, "slice.gohtml", mySlice)
+	mylib.IfErrThenLogFatal(err, "Can't execute template")
+
+	fmt.Println("\n------------")
+
+	myMap := map[string]string{
+		"uno": "one",
+		"due": "two",
+		"tre": "three",
+	}
+	err = tpl.ExecuteTemplate(os.Stdout, "map.gohtml", myMap)
 	mylib.IfErrThenLogFatal(err, "Can't execute template")
 }

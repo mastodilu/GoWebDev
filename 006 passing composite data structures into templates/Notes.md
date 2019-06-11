@@ -31,12 +31,14 @@ output
 
 ---
 
-Ad ogni iterazione di
+Ad ogni iterazione di `{{range .}} `
 
-```
+```gohtml
 {{range .}} // <-- range over the slice
     {{.}}   // <-- current field of the slice
 {{end}}
 ```
 
 `{{.}}` contiene il valore del dato all'iterazione corrente.
+
+Con le mappe funziona esattamente allo stesso identico modo.
