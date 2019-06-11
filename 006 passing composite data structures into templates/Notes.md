@@ -41,4 +41,21 @@ Ad ogni iterazione di `{{range .}} `
 
 `{{.}}` contiene il valore del dato all'iterazione corrente.
 
+---
+
+```gohtml
+{{range $key, $value := .}}
+    <li>{{$key}} - {{$value}}</li>
+{{end}}
+```
+
 Con le mappe funziona esattamente allo stesso identico modo.
+
+**NB**: `$key`, `$value` sono due nomi scelti da me, potevo usare `$cik`, `$ciak`
+
+---
+
+Questi due sono equivalenti perchè entrambi restituiscono il valore associato alla chiave
+
+- `{{range .}}`
+- `{{range $val := .}}`

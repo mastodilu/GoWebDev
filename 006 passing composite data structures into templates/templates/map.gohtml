@@ -7,13 +7,21 @@
   <body>
     <h1>CIAONE<h1>
     <ul>
+    {{/* solo value */}}
       {{range .}}
         <li>{{.}}</li>
       {{end}}
     </ul>
     <ul>
-      {{range $index, $element := .}}
-        <li>{{$index}} - {{$element}}</li>
+    {{/* key, value */}}
+      {{range $key, $value := .}}
+        <li>{{$key}} - {{$value}}</li>
+      {{end}}
+    </ul>
+    <ul>
+    {{/* solo value */}}
+      {{range $val := .}}
+        <li>{{$val}}</li>
       {{end}}
     </ul>
   </body>
