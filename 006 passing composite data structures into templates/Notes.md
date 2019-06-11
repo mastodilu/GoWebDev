@@ -2,6 +2,8 @@
 
 ## Come passare composite data structures ad un template
 
+### Slice
+
 script
 
 ```Go
@@ -11,7 +13,7 @@ err := tpl.ExecuteTemplate(os.Stdout, "one.gohtml", myData)
 
 template
 
-```html
+```gohtml
 <ul>
     {{range .}}
     <li>{{.}}</li>
@@ -43,6 +45,8 @@ Ad ogni iterazione di `{{range .}} `
 
 ---
 
+### Map
+
 ```gohtml
 {{range $key, $value := .}}
     <li>{{$key}} - {{$value}}</li>
@@ -53,9 +57,45 @@ Con le mappe funziona esattamente allo stesso identico modo.
 
 **NB**: `$key`, `$value` sono due nomi scelti da me, potevo usare `$cik`, `$ciak`
 
----
-
 Questi due sono equivalenti perchè entrambi restituiscono il valore associato alla chiave
 
 - `{{range .}}`
 - `{{range $val := .}}`
+
+---
+
+### Struct
+
+Per accedere al campo della struct si usa la sintassi `{{.nome_campo}}`
+
+script
+
+```Go
+//struct (struct anonima)
+mystruct := struct {
+    Name string
+    Age  int
+}{
+    Name: "matteo",
+    Age:  25,
+}
+err = tpl.ExecuteTemplate(os.Stdout, "struct.gohtml", mystruct)
+```
+
+template
+
+```gohtml
+<div>
+    <p>Name: {{.Name}}</p>
+    <p>Age: {{.Age}}</p>
+</div>
+```
+
+output
+
+```html
+<div>
+    <p>Name: matteo</p>
+    <p>Age: 25</p>
+</div>
+```

@@ -14,17 +14,32 @@ func init() {
 var tpl *template.Template
 
 func main() {
+	//slice
 	mySlice := []string{"one", "two", "three"}
 	err := tpl.ExecuteTemplate(os.Stdout, "slice.gohtml", mySlice)
-	mylib.IfErrThenLogFatal(err, "Can't execute template")
+	mylib.IfErrThenLogFatal(err, "can't execute slice template")
 
 	fmt.Println("\n------------")
 
+	//map
 	myMap := map[string]string{
 		"uno": "one",
 		"due": "two",
 		"tre": "three",
 	}
 	err = tpl.ExecuteTemplate(os.Stdout, "map.gohtml", myMap)
-	mylib.IfErrThenLogFatal(err, "Can't execute template")
+	mylib.IfErrThenLogFatal(err, "can't execute map template")
+
+	fmt.Println("\n------------")
+
+	//struct (struct anonima)
+	mystruct := struct {
+		Name string
+		Age  int
+	}{
+		Name: "matteo",
+		Age:  25,
+	}
+	err = tpl.ExecuteTemplate(os.Stdout, "struct.gohtml", mystruct)
+	mylib.IfErrThenLogFatal(err, "can't execute struct template")
 }
