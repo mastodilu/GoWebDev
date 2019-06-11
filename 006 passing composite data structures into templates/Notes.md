@@ -109,7 +109,6 @@ Per accedere al campo della struct si usa la sintassi `{{.nome_campo}}`
 #### script
 
 ```Go
-//struct (struct anonima)
 //slice di struct (anonime)
 slicestruct := []struct {
     Name string
