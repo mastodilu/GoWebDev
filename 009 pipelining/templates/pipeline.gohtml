@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>PIPELINE</title>
+  </head>
+  <body>
+    <h1>Prova PIPELINE</h1>
+
+    <div> {{.}}</div>
+    <div> {{. | add1}}</div>
+    <div> {{. | add1 | add1}}</div>
+    <div> {{. | add1 | add1 | add1}}</div>
+    <div> {{. | add1 | add1 | add1 | subt1}}</div>
+    {{/* alternativa */}}
+    <div> {{add1 ( add1 ( add1 ( subt1 ( . ) ) ) ) }}</div>
+  </body>
+</html>
