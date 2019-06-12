@@ -67,7 +67,7 @@ var funcmap = template.FuncMap{
 }
 
 func init() {
-    tpl, err := template.New("functions.gohtml").Funcs(funcmap).ParseFiles(".templates/functions.gohtml")
+    tpl, err := template.New("").Funcs(funcmap).ParseFiles(".templates/functions.gohtml")
     tpl = template.Must(tpl, err)
 }
 
@@ -105,7 +105,7 @@ func firstThree(s string) (string, error) {
 - chiama toupper .
 - chiama firstthree sull'output precedente
 
-I parametri sono specificati senza parentesi
+I parametri sono specificati senza parentesi.
 
 #### output
 
@@ -118,3 +118,28 @@ I parametri sono specificati senza parentesi
     <p>1+2 = 3</p>
     <p>aBC --> ABC</p>
 ```
+
+Quando viene parsato il template la mappa di funzioni deve già essere attaccata al template, altrimenti il codice fallisce perchè nel testo viene trovata una funzione "non ancora definita":
+
+OK
+
+```Go
+tpl, err := template.New("").Funcs(funcmap).ParseFiles(".templates/functions.gohtml")
+```
+
+Errore
+
+```Go
+tpl, err := template.New("").ParseFiles(".templates/functions.gohtml").Funcs(funcmap)
+```
+
+### Parsing di una stringa
+
+Per creare un template partendo da una stringa di usa questa sintassi:
+
+```Go
+myString := "bla bla bla..."
+tpl, err := template.New("<NomeDelTemplate>").Funcs(funcmap).Parse(myString)
+```
+
+Dentro a `New("<Nome>")` viene specificato il nome col quale ci si riferisce al template perchè una stringa, a differenza di un file, non ha un base name utilizzabile!
