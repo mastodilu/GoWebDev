@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Global functions</title>
+  </head>
+  <body>
+    <h1>Struct-index-slice</h1>
+    
+    <h2>Accedi ad un campo dell'array usando index</h2>
+    
+    {{if .}}
+    <div>Non hai passato un nil data</div>
+    {{end}}
+
+    <h3>esiste "two"</h3>
+    {{range .Data}}
+        {{if . | eq "two"}}
+        <div>"two" trovato</div>
+        {{else}}
+        <div>{{.}} - "two" non trovato</div>
+        {{end}}
+    {{end}}
+
+  </body>
+</html>

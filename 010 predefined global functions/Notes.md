@@ -1,6 +1,22 @@
+
 # Notes
 
 ## Index
+
+- [Notes](#notes)
+  - [Index](#index)
+    - [Script](#script)
+    - [Template](#template)
+    - [Output](#output)
+  - [Nel caso di un array contenuto in una struct](#nel-caso-di-un-array-contenuto-in-una-struct)
+    - [Script](#script-1)
+    - [Template](#template-1)
+  - [Range su uno slice contenuto in una struct](#range-su-uno-slice-contenuto-in-una-struct)
+    - [Script](#script-2)
+    - [Template](#template-2)
+  - [If](#if)
+    - [Template](#template-3)
+    - [Output](#output-1)
 
 Usando la keyword `index` è possibile accedere ai campi di uno slice:
 
@@ -80,4 +96,40 @@ err := tpl.ExecuteTemplate(os.Stdout, "globfunc.gohtml", myData)
 {{range .Data}}
 <p>{{.}}</p>
 {{end}}
+```
+---
+
+---
+
+## If
+
+### Template
+
+```Gohtml
+{{if .}}
+    <div>Non hai passato un nil data</div>
+{{end}}
+
+<h3>esiste "two"</h3>
+{{range .Data}}
+    {{if . | eq "two"}}
+        <div>"two" trovato</div>
+    {{else}}
+        <div>{{.}} - "two" non trovato</div>
+    {{end}}
+{{end}}
+```
+
+`{{if . | eq "two"}}` controlla se `dato == "two"`
+perchè `eq` è la funzione che rappresenta `==` .
+
+### Output
+
+```html
+<div>Non hai passato un nil data</div>
+<h3>esiste "two"</h3>
+<div>zero - "two" non trovato</div>
+<div>one - "two" non trovato</div>
+<div>"two" trovato</div>
+<div>three - "two" non trovato</div>
 ```
