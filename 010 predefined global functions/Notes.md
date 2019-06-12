@@ -29,7 +29,7 @@ err := tpl.ExecuteTemplate(os.Stdout, "globfunc.gohtml", words)
 <div>two</div>
 ```
 
-Nel caso di un array contenuto in una struct:
+## Nel caso di un array contenuto in una struct
 
 ### Script
 
@@ -57,4 +57,27 @@ Si accede ai campi **esportati** così:
 <div>{{index .Data 3}}</div>
 <div>{{index .Data 0}}</div>
 <div>{{index .Data 2}}</div>
+```
+
+## Range su uno slice contenuto in una struct
+
+### Script
+
+```Go
+myData := struct {
+    Name string
+    Data []string
+}{
+    Name: "matteo",
+    Data: []string{"zero", "one", "two", "three"},
+}
+err := tpl.ExecuteTemplate(os.Stdout, "globfunc.gohtml", myData)
+```
+
+### Template
+
+```Gohtml
+{{range .Data}}
+<p>{{.}}</p>
+{{end}}
 ```

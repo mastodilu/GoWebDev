@@ -15,5 +15,9 @@
     <div>{{index .Data 3}}</div>
     <div>{{index .Data 0}}</div>
     <div>{{index .Data 2}}</div>
+
+    {{range .Data}}
+    <p>{{.}}</p>
+    {{end}}
   </body>
 </html>
