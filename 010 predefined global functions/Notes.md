@@ -112,7 +112,7 @@ err := tpl.ExecuteTemplate(os.Stdout, "globfunc.gohtml", myData)
 
 <h3>esiste "two"</h3>
 {{range .Data}}
-    {{if . | eq "two"}}
+    {{if eq . "two"}}
         <div>"two" trovato</div>
     {{else}}
         <div>{{.}} - "two" non trovato</div>
@@ -120,7 +120,7 @@ err := tpl.ExecuteTemplate(os.Stdout, "globfunc.gohtml", myData)
 {{end}}
 ```
 
-`{{if . | eq "two"}}` controlla se `dato == "two"`
+`{{if eq . "two"}}` controlla se `dato == "two"`
 perchè `eq` è la funzione che rappresenta `==` .
 
 ### Output
@@ -133,3 +133,12 @@ perchè `eq` è la funzione che rappresenta `==` .
 <div>"two" trovato</div>
 <div>three - "two" non trovato</div>
 ```
+
+Altre funzioni globali sono:
+
+- **eq**: Returns the boolean truth of arg1 == arg2
+- **ne**: Returns the boolean truth of arg1 != arg2
+- **lt**: Returns the boolean truth of arg1 < arg2
+- **le**: Returns the boolean truth of arg1 <= arg2
+- **gt**: Returns the boolean truth of arg1 > arg2
+- **ge**: Returns the boolean truth of arg1 >= arg2

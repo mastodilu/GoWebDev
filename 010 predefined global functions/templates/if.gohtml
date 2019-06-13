@@ -15,7 +15,7 @@
 
     <h3>esiste "two"</h3>
     {{range .Data}}
-        {{if . | eq "two"}}
+        {{if eq . "two"}}
         <div>"two" trovato</div>
         {{else}}
         <div>{{.}} - "two" non trovato</div>
