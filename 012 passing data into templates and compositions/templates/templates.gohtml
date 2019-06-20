@@ -1,0 +1,28 @@
+{{define "template_1"}}
+    <h2>Template 1</h2>
+    {{range $person := .}}
+        <h3>{{$person.Name}} {{$person.Surname}}</h3>
+        <table>
+            <tr>
+                <th>Class</th>
+                <th>Score</th>
+            </tr>
+            {{range $Class := $person.Classes}}
+                <tr>
+                    <td>{{$Class.Class}}</td>
+                    <td>{{$Class.Score}}</td>
+                </tr>
+            {{end}}
+        </table>
+    {{end}}
+{{end}}
+
+{{define "template_2"}}
+    <h2>Template 2</h2>
+    {{if .}}
+        <div>I see things too 👍</div>
+    {{end}}
+
+
+
+{{end}}
