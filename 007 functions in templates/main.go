@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"mylib"
 	"os"
 	"strings"
 	"text/template"
@@ -45,11 +44,15 @@ var tpl *template.Template
 
 func main() {
 	fileout, err := os.Create("fileout.html")
-	mylib.IfErrThenLogFatal(err, "can't create fileout.html")
+	if err != nil {
+		panic("can't create fileout.html")
+	}
 	defer fileout.Close()
 
 	myData := []string{"ciao asd asd", "miao asd asd", "bau asd asd"}
 
 	err = tpl.ExecuteTemplate(os.Stdout, "functions.gohtml", myData)
-	mylib.IfErrThenLogFatal(err, "can't execute functions.gohtml template")
+	if err != nil {
+		panic("can't execute functions.html template")
+	}
 }
