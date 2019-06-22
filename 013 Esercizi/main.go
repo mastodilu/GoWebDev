@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"text/template"
@@ -87,13 +86,11 @@ func main() {
 
 	err = tpl.ExecuteTemplate(firstFile, "tpl.gohtml", years)
 	if err != nil {
-		fmt.Println("here")
 		log.Fatalln(err)
 	}
 
 	err = tpl.ExecuteTemplate(secondFile, "tpl2.gohtml", years)
 	if err != nil {
-		fmt.Println("there")
 		log.Fatalln(err)
 	}
 
