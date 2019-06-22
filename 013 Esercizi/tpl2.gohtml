@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+<h1>Mostra i dati passati al template</h1>
+
+{{range $year := .}}
+
+<h2>{{$year.AcaYear}}</h2>
+
+<h3>{{$year.Fall.Term}}</h3>
+    {{range $course := $year.Fall.Courses}}
+    <div>{{$course.Number}}{{$course.Name}}{{$course.Units}}</div>
+    {{end}}
+
+<h3>{{$year.Spring.Term}}</h3>
+    {{range $course := $year.Spring.Courses}}
+    <div>{{$course.Number}}{{$course.Name}}{{$course.Units}}</div>
+    {{end}}
+
+<h3>{{$year.Summer.Term}}</h3>
+    {{range $course := $year.Summer.Courses}}
+    <div>{{$course.Number}}{{$course.Name}}{{$course.Units}}</div>
+    {{end}}
+
+{{end}}
+
+</body>
+</html>

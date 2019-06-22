@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+<h1>Mostra i dati passati al template</h1>
+
+{{range .}}
+
+<h2>{{.AcaYear}}</h2>
+
+<h3>{{.Fall.Term}}</h3>
+    {{range .Fall.Courses}}
+    <div>{{.Number}}{{.Name}}{{.Units}}</div>
+    {{end}}
+
+<h3>{{.Spring.Term}}</h3>
+    {{range .Spring.Courses}}
+    <div>{{.Number}}{{.Name}}{{.Units}}</div>
+    {{end}}
+
+<h3>{{.Summer.Term}}</h3>
+    {{range .Summer.Courses}}
+    <div>{{.Number}}{{.Name}}{{.Units}}</div>
+    {{end}}
+
+{{end}}
+
+</body>
+</html>
