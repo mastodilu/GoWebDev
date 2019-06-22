@@ -49,3 +49,35 @@ err := tpl.ExecuteTemplate(out, "main.gohtml", people)
     {{end}}
 {{end}}
 ```
+
+## Chiamare metodi
+
+E' possibile chiamare i metodi sulle struct passate al template.
+
+### Script
+
+```Go
+type Person struct {
+    name string
+}
+
+func (p *Person) SayHi() string {
+    return "Hi from " + p.Name()
+}
+
+...
+
+err := tpl.ExecuteTemplate(out, "main.gohtml", people)
+```
+
+### Template
+
+``` gohtml
+...
+{{range $class := $person.Classes}}
+    {{$class.Class}} {{.SayHi}}
+    {{$class.Score}}
+{{end}}
+```
+
+Il metodo **`SayHi` non è stato passato nella funcmap**, ma è disponibile perchè è pubblico e legato al tipo `People`.

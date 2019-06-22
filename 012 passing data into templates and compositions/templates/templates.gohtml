@@ -7,10 +7,10 @@
                 <th>Class</th>
                 <th>Score</th>
             </tr>
-            {{range $Class := $person.Classes}}
+            {{range $class := $person.Classes}}
                 <tr>
-                    <td>{{$Class.Class}}</td>
-                    <td>{{$Class.Score}}</td>
+                    <td>{{$class.Class}} {{.SayHi}}</td>
+                    <td>{{$class.Score}}</td>
                 </tr>
             {{end}}
         </table>
@@ -22,7 +22,4 @@
     {{if .}}
         <div>I see things too 👍</div>
     {{end}}
-
-
-
 {{end}}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"mylib"
 	"os"
 	"text/template"
 )
@@ -11,15 +10,27 @@ func init() {
 	out, _ = os.Create("out.html")
 }
 
+// People è un tipo che contiene nome, cognome e slice di ClassScore
 type People struct {
 	Name    string
 	Surname string
 	Classes []ClassScore
 }
 
+// ClassScore è una struct che contiene una coppia classe e voto
 type ClassScore struct {
 	Class string
 	Score uint
+}
+
+// SayHi stampa un messaggio per il tipo People
+func (p People) SayHi() string {
+	return "hi people!"
+}
+
+// SayHi stampa un messaggio per il tipo ClassScore
+func (c *ClassScore) SayHi() string {
+	return "hi class!"
 }
 
 var tpl *template.Template
@@ -28,7 +39,7 @@ var out *os.File
 func main() {
 	people := []People{
 		{
-			Name: "matteo",
+			Name:    "matteo",
 			Surname: "dilu",
 			Classes: []ClassScore{
 				{"Maths", 9},
@@ -37,7 +48,7 @@ func main() {
 			},
 		},
 		{
-			Name: "giovanno",
+			Name:    "giovanno",
 			Surname: "pagliaccio",
 			Classes: []ClassScore{
 				{"Maths", 8},
@@ -46,16 +57,18 @@ func main() {
 			},
 		},
 		{
-			Name: "bimbum",
+			Name:    "bimbum",
 			Surname: "bam",
-			Classes:[]ClassScore{
+			Classes: []ClassScore{
 				{"Maths", 6},
 				{"Science", 9},
 				{"English", 9},
 			},
 		},
 	}
-	
+
 	err := tpl.ExecuteTemplate(out, "main.gohtml", people)
-	mylib.IfErrThenPanic(err, "can't execute main.gohtml template")
+	if err != nil {
+		panic(err)
+	}
 }
