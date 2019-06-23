@@ -1,4 +1,4 @@
-# Notes
+# Readme
 
 - si inizializza il progetto con `init()`
 - con `ParseGlob` si salvano tutti i template in una variabile *contenitore di template*, cioè `*template.Template`

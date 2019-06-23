@@ -1,4 +1,4 @@
-# Notes
+# Readme
 
 La sintassi per mostrare dei dati è `{{.}}` nel template.
 

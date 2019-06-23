@@ -1,4 +1,4 @@
-# Notes
+# Readme
 
 ## Passing data into nested templates
 

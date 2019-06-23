@@ -1,22 +1,22 @@
 
-# Notes
+# Readme
 
 ## Index
 
-- [Notes](#notes)
-  - [Index](#index)
-    - [Script](#script)
-    - [Template](#template)
-    - [Output](#output)
-  - [Nel caso di un array contenuto in una struct](#nel-caso-di-un-array-contenuto-in-una-struct)
-    - [Script](#script-1)
-    - [Template](#template-1)
-  - [Range su uno slice contenuto in una struct](#range-su-uno-slice-contenuto-in-una-struct)
-    - [Script](#script-2)
-    - [Template](#template-2)
-  - [If](#if)
-    - [Template](#template-3)
-    - [Output](#output-1)
+- [Readme](#Readme)
+  - [Index](#Index)
+    - [Script](#Script)
+    - [Template](#Template)
+    - [Output](#Output)
+  - [Nel caso di un array contenuto in una struct](#Nel-caso-di-un-array-contenuto-in-una-struct)
+    - [Script](#Script-1)
+    - [Template](#Template-1)
+  - [Range su uno slice contenuto in una struct](#Range-su-uno-slice-contenuto-in-una-struct)
+    - [Script](#Script-2)
+    - [Template](#Template-2)
+  - [If](#If)
+    - [Template](#Template-3)
+    - [Output](#Output-1)
 
 Usando la keyword `index` è possibile accedere ai campi di uno slice:
 

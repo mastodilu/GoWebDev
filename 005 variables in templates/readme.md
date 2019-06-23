@@ -1,4 +1,4 @@
-# Notes
+# Readme
 
 E' possibile assegnare il dato passato come argomento in `ExecuteTemplate` ad una variabile specificata nel template.
 
