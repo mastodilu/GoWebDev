@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+
+	<h1>Restaurants' menus</h1>
+
+	{{range $index, $value := .}}
+	<h2>Restaurant {{add1 $index}}</h2>
+
+	<h4>Breakfasts</h4>
+	{{range $index, $breakfast := .Breakfasts}}
+	<h4>Breakfast {{add1 $index}}</h4>
+	<p>{{.Name}}</p>
+	<p>{{.Description}}</p>
+	<p>{{.Price}}</p>
+	{{end}}
+	
+	<h3>Lunchs</h3>
+	{{range $index, $lunch := .Lunchs}}
+	<h4>Lunch {{add1 $index}}</h4>
+	<p>{{.Name}}</p>
+	<p>{{.Description}}</p>
+	<p>{{.Price}}</p>
+	{{end}}
+	
+	<h3>Dinners</h3>
+	{{range $index, $dinner := .Dinners}}
+	<h4>Dinner {{add1 $index}}</h4>
+	<p>{{.Name}}</p>
+	<p>{{.Description}}</p>
+	<p>{{.Price}}</p>
+	{{end}}
+	
+	{{end}}
+</body>
+</html>
