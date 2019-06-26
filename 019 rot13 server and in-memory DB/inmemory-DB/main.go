@@ -27,6 +27,8 @@ func handleConnection(conn net.Conn) {
 			}
 		case "GET":
 			if cmdLen < 2 {
+				fmt.Printf("Command %v is invalid.\n\r", cmd)
+			} else {
 				value, ok := memDB[cmd[1]]
 				if !ok {
 					fmt.Fprintf(conn, "value %v is not in DB\n\r", cmd[1])
