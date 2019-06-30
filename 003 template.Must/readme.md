@@ -6,7 +6,7 @@
 
 ## init()
 
-init è una funzione "reservata" che viene sempre chiamata implicitamente avviando un progetto.
+init è una funzione "riservata" che viene sempre chiamata implicitamente avviando un progetto.
 
 Non restituisce valori e non prende parametri.
 
