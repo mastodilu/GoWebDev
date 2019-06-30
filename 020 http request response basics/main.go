@@ -39,6 +39,7 @@ func writeTo(conn net.Conn) {
 }
 
 func handleConnection(conn net.Conn) {
+	defer conn.Close()
 	readFrom(conn)
 	writeTo(conn)
 }
