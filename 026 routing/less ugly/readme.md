@@ -54,4 +54,4 @@ Notare gli URL gestiti dagli handler:
 
 - `/catOnly`: gestisce solo l'url `/catOnly` (case sensitive)
 - `/dog/`: gestisce ogni url che comincia con `/dog/` (`/dog` compreso)
-- /: gestisce tutti gli altri url non gestiti dai precedenti
+- `/`: gestisce tutti gli altri url non gestiti dai precedenti
