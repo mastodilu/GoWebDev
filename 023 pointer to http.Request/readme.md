@@ -17,8 +17,12 @@ Implementa l'interfaccia Writer e questo permette di scrivere nella connessione.
 
 E' un puntatore a struct che contiene tutti i dati sulla richiesta ricevuta, compresi i dati passati tramite form.
 
-
 ## Esplora i dati passati tramite form
+
+Dopo aver chiamato il metodo `request.ParseForm()` si popolano i cambi della request `Form` e `PostForm`.
+
+1. `Form`: contiene tutte le variabili passate tramite **get** e tramite **post**.
+2. `PostForm`: contiene solo le variabili passate tramite **post**.
 
 ### Template
 
