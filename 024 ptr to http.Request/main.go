@@ -7,6 +7,7 @@ import (
 	"text/template"
 )
 
+// Handler is my type handler
 type Handler struct{}
 
 func (h Handler) ServeHTTP(response http.ResponseWriter, request *http.Request) {
