@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>http request in Go</title>
+</head>
+<body>
+	<h1>Try *http.Request</h1>
+
+	{{if .}}
+	<h2>Your data:</h2>
+	<div>
+		{{range $k, $v := .}}
+			<p>{{$k}}</p>
+			<ol>
+				{{range $i := $v}}
+					<li>{{$i}}. {{.}}<br></li>
+				{{end}}
+			</ol>
+		{{end}}
+	</div>
+	{{end}}
+
+	<form action="/" method="GET">
+		<input type="text" name="text" id="text">
+		<input type="password" name="pwd" id="pwd">
+		<input type="submit" value="OK (get)">
+	</form>
+
+	<form action="/" method="POST">
+		<input type="text" name="text" id="text">
+		<input type="password" name="pwd" id="pwd">
+		<input type="submit" value="OK (post)">
+	</form>
+</body>
+</html>

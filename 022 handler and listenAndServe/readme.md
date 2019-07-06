@@ -2,7 +2,7 @@
 
 ## Handler interface
 
-Il tipo Handler è una interfaccia che contiene il sequente metodo:
+Il tipo [Handler](https://golang.org/pkg/net/http/#Handler) è una interfaccia che contiene il sequente metodo:
 
 
 ```Go
