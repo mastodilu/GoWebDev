@@ -12,10 +12,13 @@
 		<div>
 			<h2>Header</h2>
 			<ul>
-				{{range .Header}}
-					{{range .}}
-						<li>{{.}}</li>
-					{{end}}
+				{{range $k, $v := .Header}}
+					<h3>{{$k}}</h3>
+					<ol>
+						{{range $v}}
+							<li>{{.}}</li>
+						{{end}}
+					</ol>
 				{{end}}
 			</ul>
 			
