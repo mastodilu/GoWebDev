@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -17,8 +16,5 @@ func (a AkunaMatata) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var akmt AkunaMatata
 	fmt.Println("Listening on port :8080")
-	err := http.ListenAndServe(":8080", akmt)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.ListenAndServe(":8080", akmt)
 }

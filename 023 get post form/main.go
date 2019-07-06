@@ -26,8 +26,5 @@ var tpl *template.Template
 func main() {
 	fmt.Println("Listening on port :8080")
 	var myh myhandler
-	err := http.ListenAndServe(":8080", myh)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.ListenAndServe(":8080", myh)
 }

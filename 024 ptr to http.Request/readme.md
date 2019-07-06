@@ -125,3 +125,13 @@ func main() {
 ![output get](img/001.png)
 
 ![output post](img/002.png)
+
+---
+
+Il metodo
+
+```Go
+func (r *Request) FormValue(key string) string
+```
+
+permette di estrarre il campo con un determinato nome dalla request dopo aver chiamato `ParseForm`.

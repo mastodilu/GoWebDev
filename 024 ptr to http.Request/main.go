@@ -44,8 +44,5 @@ var tpl *template.Template
 
 func main() {
 	var handler Handler
-	err := http.ListenAndServe(":8080", handler)
-	if err != nil {
-		log.Fatal(err)
-	}
+	http.ListenAndServe(":8080", handler)
 }
