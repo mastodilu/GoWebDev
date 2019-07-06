@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>no idea for a valid title</title>
+</head>
+<body>
+	<h1>Non ho idee per dei title validi</h1>
+	{{if .}}
+		<div>
+			<h2>Header</h2>
+			<ul>
+				{{range .Header}}
+					{{range .}}
+						<li>{{.}}</li>
+					{{end}}
+				{{end}}
+			</ul>
+			
+		</div>
+
+		<div>
+			<h2>URL</h2>
+			{{.URL}}
+		</div>
+
+		<div>
+			<h2>METHOD</h2>
+			{{.M}}
+		</div>
+
+		{{if .FormData}}
+			<h2>Quello che hai scritto</h2>
+				{{range .FormData.text}}
+					<p>{{.}}</p>
+				{{end}}
+		{{end}}
+
+		{{if .ContentLength}}
+			<h2>ContentLength</h2>
+			<p>{{.ContentLength}}</p>
+		{{end}}
+	{{end}}
+
+	<br>
+	<br>
+	
+	<div>
+		<form action="/form-post" method="post">
+			<input type="text" name="text" id="text" placeholder="scrivi qua...">
+			<input type="submit" value="OK">
+		</form>
+	</div>
+
+	</body>
+</html>
