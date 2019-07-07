@@ -1,4 +1,4 @@
-# Create a basic server using TCP.
+# 4. Create a basic server using TCP.
 
 - The server should use net.Listen to listen on port 8080.
 
