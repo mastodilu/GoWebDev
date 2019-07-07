@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Your Name</title>
+</head>
+<body>
+
+    <h1>Prova</h1>
+
+    {{if .}}
+        {{.Username}}
+        URL
+        {{.URL}}
+        Method
+        {{.Method}}
+    {{end}}
+
+    <a href="/index">go to index</a>
+    
+    <form action="/index/" method="POST">
+        <input type="text" name="username" id="username" placeholder="type in your name">
+        <input type="submit" value="OK">
+    </form>
+</body>
+</html>
