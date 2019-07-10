@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Files</title>
+</head>
+<body>
+    <h1>Files</h1>
+
+    <p>Choose a file</p>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="ff" id="ff">{{/* 💥 */}}
+        <input type="submit" value="Leggi">
+    </form>
+
+    {{if .}}
+        <div>
+            <h2>File content</h2>
+            <p>
+                {{.}}
+            </p>
+        </div>
+    {{end}}
+</body>
+</html>
