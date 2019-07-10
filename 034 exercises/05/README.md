@@ -1,9 +1,18 @@
-# Serve the files in the "starting-files" folder
+# Starting with the code in the "starting-files" folder:
 
-To get your images to serve, use:
+wire this program up so that it works
+
+`ParseGlob` in an init function
+
+Use `HandleFunc` for each of the routes
+
+Combine `apply` & `applyProcess` into one func called "apply"
+
+Inside the func "apply", use this code to create the logic to respond differently to a `POST` method and a `GET` method
 
 ```Go
-func StripPrefix(prefix string, h Handler) Handler
-func FileServer(root FileSystem) Handler
+if req.Method == http.MethodPost {
+    // code here
+    return
+}
 ```
-**Constraint**: you are not allowed to change the route being used for images in the template file
