@@ -12,7 +12,7 @@ Se i cookie non sono abilitati nel client, una delle possibili azioni è quella 
 
 NB: **Il nome di un cookie NON PUO' contenere spazi**.
 
-## Read write cookies
+## Write cookies
 
 ### Script
 
@@ -45,3 +45,48 @@ func main() {
 ### Output
 
 ![cookie nel client](img/001.png)
+
+## Read cookies
+
+Per leggere i cookies ci sono due opzioni:
+
+### 1.
+
+Scorrere la lista di cookies ottenuta col metodo `(r *httpRequest) Cookies() []*http.Cookie`
+
+```Go
+// Cookies parses and returns the HTTP cookies sent with the request.
+func (r *Request) Cookies() []*Cookie {
+    return readCookies(r.Header, "")
+}
+```
+
+### 2.
+
+Ottenere direttamente il cookie voluto con func `(r *http.Request) Cookie(name string) (*http.Cookie, error)`
+
+
+```Go
+c, err := r.Cookie("myCookie")
+if err != nil {
+    fmt.Println("No cookie named 'myCookie'")
+}
+fmt.Fprintln(w, "Found 'myCookie': ", *c)
+```
+
+## Script
+
+```Go
+
+func readCookie(w http.ResponseWriter, r *http.Request) {
+    for i, c := range r.Cookies() {
+        fmt.Fprintln(w, i, *c)
+    }
+
+    c, err := r.Cookie("myCookie")
+    if err != nil {
+        fmt.Println("No cookie named 'myCookie'")
+    }
+    fmt.Fprintln(w, "Found 'myCookie': ", *c)
+}
+```
