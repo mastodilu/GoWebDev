@@ -4,16 +4,24 @@ La redirect **301** mantiene lo stesse metodo della request originale.
 
 Si effettua in questi due modi alternativi:
 
+## 1
+
 ```Go
 func redirect1(w http.ResponseWriter, r *http.Request) {
-    http.Re direct(w, r, "/", http.StatusSeeOther)
+    http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+```
 
+## 2
+
+```Go
 func redirect2(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Location", "/")
     w.WriteHeader(http.StatusSeeOther)
 }
 ```
+
+## Script
 
 ```Go
 package main
