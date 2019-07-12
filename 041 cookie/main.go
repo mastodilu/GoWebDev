@@ -26,6 +26,7 @@ func readCookie(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	fmt.Println("Saluti da Linux Mint")
 	fmt.Println("Listening on port :8080")
 
 	http.HandleFunc("/", setMyCookie)
