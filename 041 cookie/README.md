@@ -90,3 +90,18 @@ func readCookie(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintln(w, "Found 'myCookie': ", *c)
 }
 ```
+
+## Delete cookie
+
+Per cancellare un cookie basta settargli il campo MaxAge ad un valore negativo e inviare nuovamente il cookie nella response.
+
+```Go
+func deleteCookie(w http.ResponseWriter, r *http.Request) {
+	ck, _ := r.Cookie("myCookie")
+	if ck != nil {
+		ck.MaxAge = -1 // deletes the cookie!
+		http.SetCookie(w, ck)
+		fmt.Fprintln(w, "'myCookie' deleted")
+	}
+}
+```

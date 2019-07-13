@@ -37,7 +37,16 @@ func writeAll(w http.ResponseWriter, r *http.Request) {
 			Value: fmt.Sprintf("Questo cookie vale %v", i+1),
 		})
 	}
+}
 
+// deleteCookie cancella il cookie di nome 'myCookie'
+func deleteCookie(w http.ResponseWriter, r *http.Request) {
+	ck, _ := r.Cookie("myCookie")
+	if ck != nil {
+		ck.MaxAge = -1 // deletes the cookie!
+		http.SetCookie(w, ck)
+		fmt.Fprintln(w, "'myCookie' deleted")
+	}
 }
 
 func main() {
@@ -47,6 +56,7 @@ func main() {
 	http.HandleFunc("/", setMyCookie)
 	http.HandleFunc("/read", readCookie)
 	http.HandleFunc("/write-all", writeAll)
+	http.HandleFunc("/delete", deleteCookie)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 
 	http.ListenAndServe(":8080", nil)
