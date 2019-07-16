@@ -23,13 +23,17 @@
         {{end}}
     {{end}}
 
-    <form action="/register" method="post">
-        <input type="button" value="Delete my user">
-    </form>
+    <br>
 
-    <form method="POST">
+    <form method="POST" action="/setMessage">
         <input type="text" name="message" id="message" placeholder="write something here">
         <input type="submit" value="OK">
+    </form>
+
+    <br>
+
+    <form action="/deleteUser" method="post">
+        <input type="submit" value="Delete my user">
     </form>
 </body>
 </html>
