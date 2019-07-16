@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Set or update your message</h1>
+    {{if .}}
+
+        <h2>Your info</h2>
+        <p>{{.Username}}</p>
+        <p>{{.Email}}</p>
+    
+        {{if .Message}}
+            <h2>Your current message</h2>
+            <p>{{.Message}}</p>
+            <strong>Fill the form to update your message</strong>
+        {{else}}
+            <strong>Fill the form to set a message</strong>
+        {{end}}
+    {{end}}
+
+    <form action="/register" method="post">
+        <input type="button" value="Delete my user">
+    </form>
+
+    <form method="POST">
+        <input type="text" name="message" id="message" placeholder="write something here">
+        <input type="submit" value="OK">
+    </form>
+</body>
+</html>
