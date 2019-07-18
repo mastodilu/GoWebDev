@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        .button {
+          
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+        }
+        .greenButton {
+            background-color: green;
+        }
+        .redButton {
+            background-color:red;
+        }
+        </style>
     <title>Document</title>
 </head>
 <body>
@@ -33,7 +53,13 @@
     <br>
 
     <form action="/deleteUser" method="post">
-        <input type="submit" value="Delete my user">
+        <input class="redButton button" type="submit" value="Delete my user">
+    </form>
+
+    <br>
+
+    <form action="/logout" method="post">
+        <input class="greenButton button" type="submit" value="log out">
     </form>
 </body>
 </html>

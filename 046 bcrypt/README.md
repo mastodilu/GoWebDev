@@ -21,4 +21,4 @@ func registerUser(username, email string, password []byte) error {
 }
 ```
 
-TODO: consenti l'accesso ad un utente fornendo login e logout. Usa la funzione per comparare la password fornita con l'hash salvato associato ad un utente.
+// TODO: consenti l'accesso ad un utente fornendo login e logout. Usa la funzione per comparare la password fornita con l'hash salvato associato ad un utente.

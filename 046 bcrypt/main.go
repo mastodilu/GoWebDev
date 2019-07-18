@@ -30,12 +30,10 @@ func registerUser(username, email string, password []byte) error {
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("/register")
 	tpl.ExecuteTemplate(w, "register.gohtml", nil)
 }
 
 func save(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("/save")
 	username := strings.TrimSpace(r.PostFormValue("username"))
 	email := strings.TrimSpace(r.PostFormValue("email"))
 	password := strings.TrimSpace(r.PostFormValue("password"))
@@ -51,7 +49,6 @@ func save(w http.ResponseWriter, r *http.Request) {
 		tpl.ExecuteTemplate(w, "error.gohtml", "can't register this user")
 		return
 	}
-	fmt.Println("here")
 
 	// if ok go to homepage
 	http.SetCookie(w, &http.Cookie{
@@ -62,7 +59,6 @@ func save(w http.ResponseWriter, r *http.Request) {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("/home")
 	cookieSession, err := r.Cookie("email")
 	if err != nil {
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
@@ -81,7 +77,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func setMessage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("/setMessage")
 	if err := checkValidSession(r); err != nil {
 		tpl.ExecuteTemplate(w, "error.gohtml", "non sei un utente registrato")
 		return
@@ -105,7 +100,6 @@ func setMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("/deleteUser")
 	if err := checkValidSession(r); err != nil {
 		tpl.ExecuteTemplate(w, "error.gohtml", "non sei un utente registrato")
 		return
@@ -126,6 +120,35 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		MaxAge: -1,
 	})
 	tpl.ExecuteTemplate(w, "error.gohtml", "your user have been deleted from our database")
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "email",
+		Value:  "",
+		MaxAge: -1,
+	})
+	tpl.ExecuteTemplate(w, "error.gohtml", "you have logged out")
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("email")
+	user, err := db.GetUser(email)
+	if err != nil {
+		tpl.ExecuteTemplate(w, "error.gohtml", "user not found")
+		return
+	}
+	err = bcrypt.CompareHashAndPassword(user.HashPassword, []byte(r.FormValue("password")))
+	if err != nil {
+		tpl.ExecuteTemplate(w, "error.gohtml", "wrong password")
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:  "email",
+		Value: email,
+	})
+
+	tpl.ExecuteTemplate(w, "home.gohtml", UEM{user.Username, email, user.Message})
 }
 
 // checkValidSession restituisce errore se l'utente non
@@ -158,6 +181,8 @@ func main() {
 	http.HandleFunc("/", home)
 	http.HandleFunc("/setMessage", setMessage)
 	http.HandleFunc("/deleteUser", deleteUser)
+	http.HandleFunc("/logout", logout)
+	http.HandleFunc("/login", login)
 
 	http.Handle("favicon.ico", http.NotFoundHandler())
 

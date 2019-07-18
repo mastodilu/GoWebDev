@@ -5,13 +5,22 @@ import (
 )
 
 // UserInfo contiene dei dati utente
-type userInfo struct {
+type UserInfo struct {
 	Username, Message string
-	hashPassword      []byte
+	HashPassword      []byte
 }
 
 // sessionDB contiene le informazioni di tutti gli utenti
-var sessionDB = map[string]userInfo{}
+var sessionDB = map[string]UserInfo{}
+
+// GetUser restituisce l'utente se lo trova, altrimenti errore
+func GetUser(email string) (UserInfo, error) {
+	user, ok := sessionDB[email]
+	if !ok {
+		return UserInfo{}, fmt.Errorf("user not found")
+	}
+	return user, nil
+}
 
 // IsRegistered restituisce true se l'email viene trovata nel DB
 func IsRegistered(email string) bool {
@@ -23,10 +32,10 @@ func IsRegistered(email string) bool {
 // se è già registrato restituisce errore.
 func Register(username, email string, hash []byte) error {
 	if !IsRegistered(email) {
-		userInfo := userInfo{
+		userInfo := UserInfo{
 			Username:     username,
 			Message:      "",
-			hashPassword: hash,
+			HashPassword: hash,
 		}
 		sessionDB[email] = userInfo
 		return nil
