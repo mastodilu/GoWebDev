@@ -100,3 +100,34 @@ func logout(w http.ResponseWriter, r *http.Request) {
     tpl.ExecuteTemplate(w, "error.gohtml", "you have logged out")
 }
 ```
+
+## Permessi
+
+Per gestire i permessi si puo' aggiungere un campo alla struct utente in grado di memorizzare il ruolo dell'utente, ad esempio `IsAdmin bool`.
+
+Un esempio:
+
+```Go
+func promoteToAdmin(w http.ResponseWriter, r *http.Request) {
+    if err := checkValidSession(r); err != nil {
+        tpl.ExecuteTemplate(w, "error.gohtml", "invalid session")
+        return
+    }
+
+    email, _ := r.Cookie("email") // already checked for errors
+
+    err := bcrypt.CompareHashAndPassword(adminPasswordHash, []byte(r.FormValue("password")))
+    if err != nil {
+        fmt.Fprintln(w, "wrong password")
+        return
+    }
+
+    if err := db.Promote(email.Value); err != nil {
+        log.Println(err)
+        tpl.ExecuteTemplate(w, "error.gohtml", "you can't become an admin")
+        return
+    }
+
+    fmt.Fprintln(w, "you're now an administrator")
+}
+```

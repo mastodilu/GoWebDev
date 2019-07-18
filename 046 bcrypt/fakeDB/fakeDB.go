@@ -8,6 +8,7 @@ import (
 type UserInfo struct {
 	Username, Message string
 	HashPassword      []byte
+	IsAdmin           bool
 }
 
 // sessionDB contiene le informazioni di tutti gli utenti
@@ -26,6 +27,18 @@ func GetUser(email string) (UserInfo, error) {
 func IsRegistered(email string) bool {
 	_, ok := sessionDB[email]
 	return ok
+}
+
+// Promote attribuisce all'utente il ruolo di amministratore.
+// Restituisce errore se l'email non viene trovata.
+func Promote(email string) error {
+	user, ok := sessionDB[email]
+	if !ok {
+		return fmt.Errorf("user not found")
+	}
+	user.IsAdmin = true
+	sessionDB[email] = user
+	return nil
 }
 
 // Register aggiunge l'utente al DB.

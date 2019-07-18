@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
 
@@ -151,6 +152,29 @@ func login(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "home.gohtml", UEM{user.Username, email, user.Message})
 }
 
+func promoteToAdmin(w http.ResponseWriter, r *http.Request) {
+	if err := checkValidSession(r); err != nil {
+		tpl.ExecuteTemplate(w, "error.gohtml", "invalid session")
+		return
+	}
+
+	email, _ := r.Cookie("email") // already checked for errors
+
+	err := bcrypt.CompareHashAndPassword(adminPasswordHash, []byte(r.FormValue("password")))
+	if err != nil {
+		fmt.Fprintln(w, "wrong password")
+		return
+	}
+
+	if err := db.Promote(email.Value); err != nil {
+		log.Println(err)
+		tpl.ExecuteTemplate(w, "error.gohtml", "you can't become an admin")
+		return
+	}
+
+	fmt.Fprintln(w, "you're now an administrator")
+}
+
 // checkValidSession restituisce errore se l'utente non
 // ha il cookie di sessione o se non e' registrato
 func checkValidSession(r *http.Request) error {
@@ -173,8 +197,14 @@ func init() {
 }
 
 var tpl *template.Template
+var adminPasswordHash []byte
 
 func main() {
+	var err error
+	adminPasswordHash, err = bcrypt.GenerateFromPassword([]byte("GATTO"), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/save", save)
@@ -183,6 +213,7 @@ func main() {
 	http.HandleFunc("/deleteUser", deleteUser)
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/login", login)
+	http.HandleFunc("/promoteToAdmin", promoteToAdmin)
 
 	http.Handle("favicon.ico", http.NotFoundHandler())
 
