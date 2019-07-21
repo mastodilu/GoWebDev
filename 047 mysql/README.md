@@ -67,3 +67,62 @@ Il package `"golang.org/x/crypto/ssh/terminal"` permette di far scrivere la pass
 NB: il nome del database da usare e' quello che in **MySQL workbench** si chiama `schema`:
 
 ![schema database name](schema.png)
+
+## Read
+
+```Go
+func read() {
+    query := `select name from people;`
+    dbRows, err := db.Query(query)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    for dbRows.Next() {
+        var name string
+        if err := dbRows.Scan(&name); err != nil {
+            log.Fatal(err)
+        }
+        fmt.Println(name)
+    }
+}
+```
+
+Si esegue la `SELECT` cosi':
+
+```Go
+query := `select name from people;`
+dbRows, err := db.Query(query)
+/* check error */
+```
+
+Il metodo `(db *DB) Query` vuole come parametro la query e restituisce un puntatore a `Rows`:
+
+```Go
+func (db *DB) Query(query string, args ...interface{}) (*Rows, error)
+```
+
+Per scorrere le righe del risultato si usa
+
+```Go
+func (rs *Rows) Next() bool
+```
+
+che prepara la lettura della riga corrente con il metodo
+
+```Go
+func (rs *Rows) Scan(dest ...interface{}) error
+```
+
+`Scan` vuole come parametri dei puntatori, uno per colonna letta dalla tabella. Ad esempio:
+
+```GO
+query := `select * from people;`
+dbRows, err := db.Query(query)
+// error ...
+var id, name string
+for dbRows.Next() {
+    dbRows.Scan(&id, &name) // <--
+    // error...
+}
+```
