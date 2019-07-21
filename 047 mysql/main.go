@@ -11,22 +11,68 @@ import (
 )
 
 func create() {
-	/*
-	   CREATE TABLE Persons (
-	       PersonID int,
-	       LastName varchar(255),
-	       FirstName varchar(255),
-	       Address varchar(255),
-	       City varchar(255)
-	   );
-	*/
-	//query := `create table gotable`
+	query := `CREATE TABLE DOG( 
+		DogID INT(11) NOT NULL AUTO_INCREMENT,
+		DogName VARCHAR(64),
+		DogOwner VARCHAR(64),
+		PRIMARY KEY (DogID)
+	);`
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Done\n\t%v\n", query)
 }
 
-func insert() {}
+func insert1() {
+	query := `INSERT INTO DOG (DogName, DogOwner) VALUES ('Fido', 'Mario');`
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Done: %v\n", query)
+}
+
+func insert2() {
+	dogNames := []string{"Fuffi", "Pluto", "Norberto"}
+	dogOwners := []string{"Matteo", "Gennaro", "Hagrid"}
+	for i := range dogNames {
+		query := fmt.Sprintf("INSERT INTO DOG (DogName, DogOwner) VALUES ('%v', '%v');", dogNames[i], dogOwners[i])
+		_, err := db.Exec(query)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("Done:\n\t%v\n", query)
+	}
+}
+
+func insert3() {
+	query := "INSERT INTO DOG (DogName, DogOwner) VALUES (?, ?);"
+	dogNames := []string{"Fuffi", "Pluto", "Norberto"}
+	dogOwners := []string{"Matteo", "Gennaro", "Hagrid"}
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	var res sql.Result
+	for i := range dogNames {
+		res, err = stmt.Exec(dogNames[i], dogOwners[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Inserted %v rows\n", n)
+}
 
 func read() {
-	query := `select name from people;`
+	query := `select PersonName from PERSON;`
 	fmt.Printf("query:\n\t%v\ncontent:\n", query)
 	dbRows, err := db.Query(query)
 	if err != nil {
@@ -46,7 +92,7 @@ func read() {
 }
 
 func readAllColumns() {
-	query := `select * from people;`
+	query := `select * from PERSON;`
 	fmt.Printf("query:\n\t%v\ncontent:\n", query)
 	dbRows, err := db.Query(query)
 	if err != nil {
@@ -62,14 +108,31 @@ func readAllColumns() {
 	}
 }
 
-func update() {}
+func update() {
+	query := `UPDATE DOG SET DogName = 'Fidoh' WHERE DogName = 'Fido';`
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Done: %v\n", query)
+}
 
-func delete() {}
+func delete() {
+	query := `DELETE FROM DOG WHERE DogName = 'Fidoh';`
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Done: %v\n", query)
+}
 
 func drop() {
-	/*
-	   DROP TABLE Shippers;
-	*/
+	query := `DROP TABLE PERSON;`
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Done: %v\n", query)
 }
 
 var db *sql.DB
@@ -97,5 +160,14 @@ func main() {
 	}
 	fmt.Println("you're connected to the DB.")
 
-	readAllColumns()
+	// read()
+	// readAllColumns()
+	// create()
+	// insert1()
+	// insert2()
+	// insert3()
+	// update()
+	// delete()
+	// drop()
+
 }

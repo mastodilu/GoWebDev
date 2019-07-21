@@ -126,3 +126,87 @@ for dbRows.Next() {
     // error...
 }
 ```
+
+## Create
+
+```Go
+func create() {
+    query := `CREATE TABLE DOG( 
+        DogID INT(11) NOT NULL AUTO_INCREMENT,
+        DogName VARCHAR(64),
+        DogOwner VARCHAR(64),
+        PRIMARY KEY (DogID)
+    );`
+    _, err := db.Exec(query)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Done\n\t%v\n", query)
+}
+```
+
+## Insert
+
+```Go
+func insert1() {
+    query := `INSERT INTO DOG (DogName, DogOwner) VALUES ('Fido', 'Mario');`
+    _, err := db.Exec(query)
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Done: %v\n", query)
+}
+```
+
+## Eseguire molte query
+
+Ci sono due modi efficienti:
+
+1. usare la funzione `fmt.Sprintf`
+2. usare i prepared statement
+
+### `fmt.SPrintf`
+
+```Go
+func insert2() {
+    dogNames := []string{"Fuffi", "Pluto", "Norberto"}
+    dogOwners := []string{"Matteo", "Gennaro", "Hagrid"}
+    for i := range dogNames {
+        query := fmt.Sprintf("INSERT INTO DOG (DogName, DogOwner) VALUES ('%v', '%v');", dogNames[i], dogOwners[i])
+        _, err := db.Exec(query)
+        if err != nil {
+            log.Fatal(err)
+        }
+        fmt.Printf("Done:\n\t%v\n", query)
+    }
+}
+```
+
+### Prepared statement
+
+```Go
+func insert3() {
+	query := "INSERT INTO DOG (DogName, DogOwner) VALUES (?, ?);"
+	dogNames := []string{"Fuffi", "Pluto", "Norberto"}
+    dogOwners := []string{"Matteo", "Gennaro", "Hagrid"}
+    stmt, err := db.Prepare(query)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer stmt.Close()
+
+    var res sql.Result
+    for i := range dogNames {
+        res, err = stmt.Exec(dogNames[i], dogOwners[i])
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+
+    n, err := res.RowsAffected()
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Printf("Inserted %v rows\n", n)
+}
+```
