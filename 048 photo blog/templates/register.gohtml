@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register</title>
+</head>
+<body>
+    <h1>Photo blog</h1>
+
+    <div id="loginDiv">
+        <h2>Login</h2>
+
+        <form action="/login" method="post">
+            <input type="text" name="email" id="email" placeholder="email" required=true>
+            <input type="password" name="password" id="password" placeholder="password" required=true>
+            <input type="submit" value="Login">
+        </form>
+
+        {{if .LoginMessage}}
+            <div id="loginMessageDiv">
+                <p >{{.LoginMessage}}</p>
+            </div>
+        {{end}}
+    </div>
+    
+
+    <div id="registerDiv">
+        <h2>Register</h2>
+
+        <form action="/register" method="post">
+            <input type="text" name="username" id="username" placeholder="username" required=true>
+            <input type="text" name="email" id="email" placeholder="email" required=true>
+            <input type="password" name="password" id="password" placeholder="password" required=true>
+            <input type="submit" value="Register">
+        </form>
+
+        {{if .RegisterMessage}}
+            <div id="registerMessageDiv">
+                <p >{{.RegisterMessage}}</p>
+            </div>
+        {{end}}
+    </div>
+    
+</body>
+</html>
