@@ -5,11 +5,15 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // User contiene alcuni dati utente
 type User struct {
 	Username string
+	Email    string
+	session  string
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +47,19 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	id, err := uuid.NewV4()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "there was an error while creating your uuid", http.StatusNotFound)
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "sessionID",
+		Value: id.String(),
+	})
+
+	users = append(users, User{username, email, id.String()})
+
 	//TODO add user to DB
 	//TODO create session
 	//TODO create user directory
@@ -69,18 +86,29 @@ func loginCheck(w http.ResponseWriter, r *http.Request) {
 	}
 	//TODO check in DB if user exists
 	//TODO check valid session
-	//TODO load user personal page
+	sessionID, err := uuid.NewV4()
+	if err != nil {
+		http.Error(w, "Your session couldn't be created", http.StatusNotFound)
+		log.Println(err)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:  "sessionID",
+		Value: sessionID.String(),
+	})
+
+	users = append(users, User{"", email, sessionID.String()})
 	fmt.Fprintln(w, "ok")
 }
 
 func userblog(w http.ResponseWriter, r *http.Request) {
 	//TODO check valid session
-	tpl.ExecuteTemplate(w, "user.gohtml", User{"Mastodilu"})
+	tpl.ExecuteTemplate(w, "user.gohtml", users)
 }
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
-	users = append(users, User{"mastodilu"})
+
 }
 
 var users []User
@@ -100,4 +128,7 @@ func main() {
 	http.HandleFunc("/registerCheck", registerCheck)
 
 	http.ListenAndServe(":8080", nil)
+
+	//TODO implementa logout
+	//TODO implementa delete account
 }

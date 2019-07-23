@@ -19,7 +19,7 @@ func home(w http.ResponseWriter, r *http.Request) {
     _, err := r.Cookie("uuid")
     if err != nil {
         // non esiste il cookie di sessione, lo creo
-        id, err := uuid.NewV4()
+        id, err := uuid.NewV4() // 💥
         if err != nil {
             http.NotFoundHandler()
             log.Fatal(err)
