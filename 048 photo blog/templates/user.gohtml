@@ -1,24 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>User blog</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>User blog</title>
+  <style>
+  .TopMessage {
+    text-align: center;
+    border: 1px solid;
+    border-color:chocolate;
+    border-radius: 8px;
+    background: lemonchiffon;
+  }
+  .fakeImage {
+    width: 200px;
+    height: 100px;
+    background:lightblue;
+    border: 1px solid;
+    border-color:rgb(59, 119, 231);
+    border-radius: 8px;
+  }
+  .photoFrame {
+    border: 1px solid;
+    border-color:rgb(59, 119, 231);
+    border-radius: 8px;
+  }
+  .fakeDescription {
+    font-family:Arial, Helvetica, sans-serif;
+    font-style: italic; 
+  }
+  .verticalSpacer {
+    height: 10px;
+  }
+  .formInputDescription {
+    min-width: 200px;
+  }
+  </style>
 </head>
 <body>
-    <h1>{{.Username}}'s Blog</h1>
+  <h1>{{.User.Username}}'s Blog</h1>
 
-    <div id="topmessagediv">
-        <p>{{.TopMessage}}</p>
+  {{if .TopMessage}}
+    <div id="topmessagediv" class="TopMessage">
+      <p>{{.TopMessage}}</p>
     </div>
+  {{end}}
 
-    <div>
-        <div>Profile picture</div> <div>USERNAME</div> <div><p>user status</p></div>
-    </div>
+  <div class="verticalSpacer"></div>
 
-    <div>
-    <p>list of images here</p>        >
+  <div>
+    <picture>
+    <img src="https://cdn1.iconfinder.com/data/icons/business-users/512/circle-512.png" alt="User profile icon" style="width:50px;">
+    </picture>
+  </div>
+
+  <div class="verticalSpacer"></div>
+
+  <div>
+    <ul>
+      <li>{{.User.Username}}</li>
+      <li>user status</li>
+    </ul>
+  </div>
+
+  <div class="verticalSpacer"></div>
+
+  <h3>Aggiungi una nuova foto</h3>
+
+  <div>
+    <form method="post" action="/imageUpload" enctype=multipart/form-data>
+      <label for="imageUpload">📸 </label>
+      <input type="file" name="image" id="image"><br>
+      <input type="text" name="description" class="formInputDescription" id="description" placeholder="Add a description of the picture">
+      <input type="submit" value="Carica">
+    </form>
+  </div>
+
+  <div>
+    <h2>Your pictures</h2>
+
+    <div class="photoFrame">
+      <div class="fakeImage"></div>
+      <div class="fakeDescription"><p>Some text</p></div>
     </div>
+  </div>
+
+  <div class="verticalSpacer"></div>
+
+  <div class="photoFrame">
+      <div class="fakeImage"></div>
+      <div class="fakeDescription"><p>Some text</p></div>
+    </div>
+  </div>
+
+  <div class="verticalSpacer"></div>
+  
+  <div class="photoFrame">
+      <div class="fakeImage"></div>
+      <div class="fakeDescription"><p>Some text</p></div>
+    </div>
+  </div>
 </body>
 </html>

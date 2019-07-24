@@ -16,6 +16,12 @@ type User struct {
 	session  string
 }
 
+// Data contiene un utente e un messaggio da mostrare in cima alla pagina
+type Data struct {
+	TopMessage string
+	User       User
+}
+
 func homePage(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		Message string
@@ -101,9 +107,28 @@ func loginCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "ok")
 }
 
+func imageUpload(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("image upload ")
+	f, h, err := r.FormFile("image")
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer f.Close()
+	//TODO check file format
+	//TODO store file in user dir
+	//TODO reload user page with new content
+	fmt.Printf("file %T uploaded\n", f)
+	fmt.Printf("File name: %v, size: %v\n", h.Filename, h.Size)
+}
+
 func userblog(w http.ResponseWriter, r *http.Request) {
 	//TODO check valid session
-	tpl.ExecuteTemplate(w, "user.gohtml", users)
+	userIndex := 0
+	data := Data{TopMessage: "un messaggio di alert a caso", User: users[userIndex]}
+	fmt.Println(data)
+	tpl.ExecuteTemplate(w, "user.gohtml", data) // users[userIndex]
 }
 
 func init() {
@@ -126,7 +151,9 @@ func main() {
 
 	http.HandleFunc("/loginCheck", loginCheck)
 	http.HandleFunc("/registerCheck", registerCheck)
+	http.HandleFunc("/imageUpload", imageUpload)
 
+	fmt.Println("Listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 
 	//TODO implementa logout
