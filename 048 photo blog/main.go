@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -33,6 +34,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "homepage.gohtml", data)
 }
 
+// registerCheck controlla il form di registrazione
 func registerCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/register")
 
@@ -68,19 +70,29 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 
 	//TODO add user to DB
 	//TODO create session
-	//TODO create user directory
 
+	//create user directory
+	path := fmt.Sprintf("users/%v", email)
+	if err := os.Mkdir(path, 0777); err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println("Check the new directory", path)
 	fmt.Fprintln(w, "OK")
 }
 
+// loginPage mostra la pagina di login
 func loginPage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "login.gohtml", nil)
 }
 
+// registerPage mostra la pagina di registrazione
 func registerPage(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "register.gohtml", nil)
 }
 
+// loginCheck controlla il form di login
 func loginCheck(w http.ResponseWriter, r *http.Request) {
 	var email, password string
 	email = r.FormValue("email")
@@ -107,6 +119,7 @@ func loginCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "ok")
 }
 
+// imageUpload controlla il form per l'inserimento di immagini nel form
 func imageUpload(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("image upload ")
 	f, h, err := r.FormFile("image")
@@ -123,12 +136,24 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("File name: %v, size: %v\n", h.Filename, h.Size)
 }
 
+// userblog mostra la pagina del blog di un utente
 func userblog(w http.ResponseWriter, r *http.Request) {
 	//TODO check valid session
 	userIndex := 0
 	data := Data{TopMessage: "un messaggio di alert a caso", User: users[userIndex]}
 	fmt.Println(data)
 	tpl.ExecuteTemplate(w, "user.gohtml", data) // users[userIndex]
+}
+
+// checkValidSession controlla che la sessione sia attiva:
+// controlla che ci sia il cookie di sessione e che sia valido
+// TODO controlla la registrazione nel database
+func checkValidSession(r *http.Request) error {
+	_, err := r.Cookie("sessionID")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func init() {
@@ -158,4 +183,5 @@ func main() {
 
 	//TODO implementa logout
 	//TODO implementa delete account
+	//TODO implementa il file server per caricare le immagini ai blog
 }
