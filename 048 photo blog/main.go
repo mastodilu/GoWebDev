@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -66,6 +68,11 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 		Value: id.String(),
 	})
 
+	http.SetCookie(w, &http.Cookie{
+		Name:  "email",
+		Value: email,
+	})
+
 	users = append(users, User{username, email, id.String()})
 
 	//TODO add user to DB
@@ -119,9 +126,25 @@ func loginCheck(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "ok")
 }
 
+func folderExists(folder string) bool {
+	_, err := os.Stat(fmt.Sprintf("users/%v", folder))
+	if err != nil {
+		return !os.IsNotExist(err)
+	}
+	return true
+}
+
 // imageUpload controlla il form per l'inserimento di immagini nel form
 func imageUpload(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("image upload ")
+
+	if err := checkValidSession(r); err != nil {
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
+
+	email, _ := r.Cookie("email") // already checked for error
+
 	f, h, err := r.FormFile("image")
 	if err != nil {
 		log.Println(err)
@@ -129,8 +152,28 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer f.Close()
-	//TODO check file format
+
+	// check user folder exists
+	if !folderExists(email.Value) {
+		log.Printf("Folder %v does not exist\n", email.Value)
+		return
+	}
 	//TODO store file in user dir
+	var buffer []byte
+	//TODO check https://golang.org/pkg/image/
+
+	if _, err := io.ReadFull(f, buffer); err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	path := fmt.Sprintf("users/%v/%v", email.Value, h.Filename)
+	fmt.Println("> ", path)
+	if err := ioutil.WriteFile(path, buffer, 0644); err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	//TODO reload user page with new content
 	fmt.Printf("file %T uploaded\n", f)
 	fmt.Printf("File name: %v, size: %v\n", h.Filename, h.Size)
@@ -149,8 +192,12 @@ func userblog(w http.ResponseWriter, r *http.Request) {
 // controlla che ci sia il cookie di sessione e che sia valido
 // TODO controlla la registrazione nel database
 func checkValidSession(r *http.Request) error {
-	_, err := r.Cookie("sessionID")
-	if err != nil {
+
+	if _, err := r.Cookie("sessionID"); err != nil {
+		return err
+	}
+
+	if _, err := r.Cookie("email"); err != nil {
 		return err
 	}
 	return nil
@@ -178,8 +225,7 @@ func main() {
 	http.HandleFunc("/registerCheck", registerCheck)
 	http.HandleFunc("/imageUpload", imageUpload)
 
-	fmt.Println("Listening on port 8080")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8081", nil)
 
 	//TODO implementa logout
 	//TODO implementa delete account
