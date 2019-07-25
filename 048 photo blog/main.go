@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -158,22 +158,30 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Folder %v does not exist\n", email.Value)
 		return
 	}
-	//TODO store file in user dir
-	var buffer []byte
-	//TODO check https://golang.org/pkg/image/
+	// write file
+	wd, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Debug 1")
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	path := filepath.Join(wd, "users", email.Value, h.Filename)
+	newfile, err := os.Create(path)
+	if err != nil {
+		fmt.Println("Debug 2")
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer newfile.Close()
+	if _, err = io.Copy(newfile, f); err != nil {
+		fmt.Println("Debug 3")
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	if _, err := io.ReadFull(f, buffer); err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	path := fmt.Sprintf("users/%v/%v", email.Value, h.Filename)
-	fmt.Println("> ", path)
-	if err := ioutil.WriteFile(path, buffer, 0644); err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	//TODO reload user page with new content
 	fmt.Printf("file %T uploaded\n", f)
 	fmt.Printf("File name: %v, size: %v\n", h.Filename, h.Size)
