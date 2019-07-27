@@ -48,3 +48,14 @@ func GetUser(email string) (User, error) {
 	}
 	return user, nil
 }
+
+// SetSession aggiorna la sessione dell'utente
+func SetSession(em, se string) error {
+	user, ok := users[em]
+	if !ok {
+		return fmt.Errorf("user does not exist")
+	}
+	user.SessionID = se
+	users[em] = user
+	return nil
+}
