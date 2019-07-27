@@ -4,8 +4,8 @@ import "fmt"
 
 //User contiene le informazioni degli utenti
 type User struct {
-	Username, SessionID string
-	Images              []string
+	Username, Email string
+	Images          []string
 }
 
 var users map[string]User
@@ -14,7 +14,7 @@ var users map[string]User
 func AddUser(email, username, session string) error {
 	//TODO implementa nel DB
 
-	if _, ok := users[email]; ok {
+	if _, ok := users[session]; ok {
 		return fmt.Errorf("user already exists")
 	}
 
@@ -22,9 +22,9 @@ func AddUser(email, username, session string) error {
 		return fmt.Errorf("invalid session id")
 	}
 
-	users[email] = User{
-		Username:  username,
-		SessionID: session,
+	users[session] = User{
+		Username: username,
+		Email:    email,
 	}
 	return nil
 }
@@ -32,20 +32,20 @@ func AddUser(email, username, session string) error {
 // UserList restituisce l'elenco di utenti
 func UserList() []string {
 	var uu []string
-	for k := range users {
-		uu = append(uu, k)
+	for _, v := range users {
+		uu = append(uu, v.Email)
 	}
 	return uu
 }
 
 // AddImage aggiunge il path dell'immagine all'utente indicato
-func AddImage(email, path string) error {
-	user, ok := users[email]
+func AddImage(session, path string) error {
+	user, ok := users[session]
 	if !ok {
 		return fmt.Errorf("user does not exist")
 	}
 	user.Images = append(user.Images, path)
-	users[email] = user
+	users[session] = user
 	return nil
 }
 
@@ -55,8 +55,8 @@ func RemoveUser(email string) {
 }
 
 // GetUser restituisce l'utente corrispondente all'email, oppure errore
-func GetUser(email string) (User, error) {
-	user, ok := users[email]
+func GetUser(session string) (User, error) {
+	user, ok := users[session]
 	if !ok {
 		return User{}, fmt.Errorf("user does not exist")
 	}
@@ -64,12 +64,12 @@ func GetUser(email string) (User, error) {
 }
 
 // SetSession aggiorna la sessione dell'utente
-func SetSession(em, se string) error {
-	user, ok := users[em]
+func SetSession(current, new string) error {
+	user, ok := users[current]
 	if !ok {
 		return fmt.Errorf("user does not exist")
 	}
-	user.SessionID = se
-	users[em] = user
+	delete(users, current)
+	users[new] = user
 	return nil
 }
