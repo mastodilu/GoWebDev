@@ -9,36 +9,25 @@ import (
 	"os"
 	"path/filepath"
 
+	"./fakedb"
+
 	uuid "github.com/satori/go.uuid"
 )
-
-// User contiene alcuni dati utente
-type User struct {
-	Username string
-	Email    string
-	session  string
-}
-
-// Data contiene un utente e un messaggio da mostrare in cima alla pagina
-type Data struct {
-	TopMessage string
-	User       User
-}
 
 // UserDataImages contiene le informazioni da passare alla pagina user.gohtml
 type UserDataImages struct {
 	TopMessage string
-	User       User
+	User       fakedb.User
 	ImagePaths []string
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		Message string
-		Users   []User
+		Users   []fakedb.User
 	}{
 		Message: "Eccoti nella home",
-		Users:   users,
+		Users:   fakedb.UserList(),
 	}
 	tpl.ExecuteTemplate(w, "homepage.gohtml", data)
 }
@@ -57,49 +46,41 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseForm()
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "Error parsing your values", http.StatusNotFound)
-		return
-	}
-
+	// create UUID
 	id, err := uuid.NewV4()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "there was an error while creating your uuid", http.StatusNotFound)
 	}
 
+	// add user to DB
+	if err = fakedb.AddUser(email, username, id.String()); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	// set seesion cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:  "sessionID",
 		Value: id.String(),
 	})
 
-	http.SetCookie(w, &http.Cookie{
-		Name:  "email",
-		Value: email,
-	})
-
-	users = append(users, User{username, email, id.String()})
-
-	// create user assets dir
+	// get current directory
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// TODO check errors
+
+	// create user assets dir
 	path := filepath.Join(wd, "assets", email)
-	err = os.Mkdir(path, 0777)
-	if err != nil {
+	if err := os.Mkdir(path, 0777); err != nil {
 		log.Println(err)
 	}
 
-	//TODO add user to DB
-	//TODO create session
-
-	fmt.Fprintln(w, "OK")
+	fmt.Fprintln(w, "registered")
 }
 
 // loginPage mostra la pagina di login
@@ -119,24 +100,22 @@ func loginCheck(w http.ResponseWriter, r *http.Request) {
 	password = r.FormValue("password")
 	if email == "" || password == "" {
 		log.Println("email or password are empty")
-		fmt.Fprintln(w, "Error parsing your values", http.StatusNotFound)
+		fmt.Fprintln(w, "Error parsing your values", http.StatusInternalServerError)
 		return
 	}
-	//TODO check in DB if user exists
-	//TODO check valid session
-	sessionID, err := uuid.NewV4()
+	user, err := fakedb.GetUser(email)
 	if err != nil {
-		http.Error(w, "Your session couldn't be created", http.StatusNotFound)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:  "sessionID",
-		Value: sessionID.String(),
+		Value: user.SessionID,
 	})
 
-	users = append(users, User{"", email, sessionID.String()})
-	fmt.Fprintln(w, "ok")
+	fmt.Fprintln(w, "logged in")
 }
 
 func folderExists(folder string) bool {

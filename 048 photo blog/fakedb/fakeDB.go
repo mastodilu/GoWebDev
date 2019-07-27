@@ -13,15 +13,29 @@ var users map[string]User
 // AddUser aggiunge un utente al DB
 func AddUser(email, username, session string) error {
 	//TODO implementa nel DB
-	_, ok := users[email]
-	if ok {
+
+	if _, ok := users[email]; ok {
 		return fmt.Errorf("user already exists")
 	}
+
+	if session == "" {
+		return fmt.Errorf("invalid session id")
+	}
+
 	users[email] = User{
 		Username:  username,
 		SessionID: session,
 	}
 	return nil
+}
+
+// UserList restituisce l'elenco di utenti
+func UserList() []string {
+	var uu []string
+	for k := range users {
+		uu = append(uu, k)
+	}
+	return uu
 }
 
 // AddImage aggiunge il path dell'immagine all'utente indicato
