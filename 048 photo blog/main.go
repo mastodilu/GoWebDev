@@ -25,6 +25,13 @@ type Data struct {
 	User       User
 }
 
+// UserDataImages contiene le informazioni da passare alla pagina user.gohtml
+type UserDataImages struct {
+	TopMessage string
+	User       User
+	ImagePaths []string
+}
+
 func homePage(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		Message string
@@ -75,17 +82,23 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 
 	users = append(users, User{username, email, id.String()})
 
-	//TODO add user to DB
-	//TODO create session
-
-	//create user directory
-	path := fmt.Sprintf("users/%v", email)
-	if err := os.Mkdir(path, 0777); err != nil {
+	// create user assets dir
+	wd, err := os.Getwd()
+	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("Check the new directory", path)
+	// TODO check errors
+	path := filepath.Join(wd, "assets", email)
+	err = os.Mkdir(path, 0777)
+	if err != nil {
+		log.Println(err)
+	}
+
+	//TODO add user to DB
+	//TODO create session
+
 	fmt.Fprintln(w, "OK")
 }
 
@@ -144,6 +157,7 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	email, _ := r.Cookie("email") // already checked for error
+	sessionID, _ := r.Cookie("sessionID")
 
 	f, h, err := r.FormFile("image")
 	if err != nil {
@@ -153,11 +167,6 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer f.Close()
 
-	// check user folder exists
-	if !folderExists(email.Value) {
-		log.Printf("Folder %v does not exist\n", email.Value)
-		return
-	}
 	// write file
 	wd, err := os.Getwd()
 	if err != nil {
@@ -166,7 +175,9 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	path := filepath.Join(wd, "users", email.Value, h.Filename)
+	//TODO check file already exists
+
+	path := filepath.Join(wd, "assets", email.Value, h.Filename)
 	newfile, err := os.Create(path)
 	if err != nil {
 		fmt.Println("Debug 2")
@@ -174,6 +185,7 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("Created", path)
 	defer newfile.Close()
 	if _, err = io.Copy(newfile, f); err != nil {
 		fmt.Println("Debug 3")
@@ -182,9 +194,12 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO reload user page with new content
-	fmt.Printf("file %T uploaded\n", f)
-	fmt.Printf("File name: %v, size: %v\n", h.Filename, h.Size)
+	data := UserDataImages{}
+	data.TopMessage = "nada di importante"
+	data.User = User{"mastodilu", email.Value, sessionID.Value}
+	data.ImagePaths = []string{filepath.Join("assets", email.Value, "1.jpeg")}
+
+	tpl.ExecuteTemplate(w, "user.gohtml", data)
 }
 
 // userblog mostra la pagina del blog di un utente
@@ -222,6 +237,7 @@ var tpl *template.Template
 func main() {
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
+	http.Handle("/assets/", http.FileServer(http.Dir("."))) // invia il contenuto della cartella assets!!!
 
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/login", loginPage)
