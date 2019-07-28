@@ -16,10 +16,10 @@
     {{end}}
 
     <ul>
-        {{range $i, $utente := .Users}}
+        {{range $i, $email := .Emails}}
             <div>
                 <li>
-                    <a href="/user/{{$i}}">{{$utente.Username}}</a>
+                    <a href="/user/{{$email}}">{{$email}}</a>
                 </li>
             </div>
         {{end}}

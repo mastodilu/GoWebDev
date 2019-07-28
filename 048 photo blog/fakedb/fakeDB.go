@@ -1,51 +1,53 @@
 package fakedb
 
-import "fmt"
+import (
+	"fmt"
+	"path/filepath"
+)
 
 //User contiene le informazioni degli utenti
 type User struct {
-	Username, Email string
-	Images          []string
+	Username string
+	Images   []string
 }
 
-var users map[string]User
+var users = map[string]User{}
 
 // AddUser aggiunge un utente al DB
-func AddUser(email, username, session string) error {
+func AddUser(email, username string) error {
 	//TODO implementa nel DB
 
-	if _, ok := users[session]; ok {
+	if _, ok := users[email]; ok {
 		return fmt.Errorf("user already exists")
 	}
 
-	if session == "" {
-		return fmt.Errorf("invalid session id")
-	}
-
-	users[session] = User{
-		Username: username,
-		Email:    email,
-	}
+	users[email] = User{Username: username}
 	return nil
 }
 
 // UserList restituisce l'elenco di utenti
 func UserList() []string {
 	var uu []string
-	for _, v := range users {
-		uu = append(uu, v.Email)
+	for k := range users {
+		uu = append(uu, k)
 	}
 	return uu
 }
 
+// UserExists restituisce true se l'email esiste, altrimenti false
+func UserExists(em string) bool {
+	_, ok := users[em]
+	return ok
+}
+
 // AddImage aggiunge il path dell'immagine all'utente indicato
-func AddImage(session, path string) error {
-	user, ok := users[session]
+func AddImage(email, path string) error {
+	user, ok := users[email]
 	if !ok {
 		return fmt.Errorf("user does not exist")
 	}
-	user.Images = append(user.Images, path)
-	users[session] = user
+	user.Images = append(user.Images, filepath.Join("assets", email, path))
+	users[email] = user
 	return nil
 }
 
@@ -55,21 +57,10 @@ func RemoveUser(email string) {
 }
 
 // GetUser restituisce l'utente corrispondente all'email, oppure errore
-func GetUser(session string) (User, error) {
-	user, ok := users[session]
+func GetUser(email string) (User, error) {
+	user, ok := users[email]
 	if !ok {
 		return User{}, fmt.Errorf("user does not exist")
 	}
 	return user, nil
-}
-
-// SetSession aggiorna la sessione dell'utente
-func SetSession(current, new string) error {
-	user, ok := users[current]
-	if !ok {
-		return fmt.Errorf("user does not exist")
-	}
-	delete(users, current)
-	users[new] = user
-	return nil
 }

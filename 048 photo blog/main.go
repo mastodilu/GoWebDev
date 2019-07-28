@@ -8,10 +8,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"./fakedb"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 // UserDataImages contiene le informazioni da passare alla pagina user.gohtml
@@ -24,10 +23,10 @@ type UserDataImages struct {
 func homePage(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		Message string
-		Users   []fakedb.User
+		Emails  []string
 	}{
 		Message: "Eccoti nella home",
-		Users:   fakedb.UserList(),
+		Emails:  fakedb.UserList(),
 	}
 	tpl.ExecuteTemplate(w, "homepage.gohtml", data)
 }
@@ -46,15 +45,8 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// create UUID
-	id, err := uuid.NewV4()
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "there was an error while creating your uuid", http.StatusNotFound)
-	}
-
 	// add user to DB
-	if err = fakedb.AddUser(email, username, id.String()); err != nil {
+	if err := fakedb.AddUser(email, username); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println(err)
 		return
@@ -63,7 +55,7 @@ func registerCheck(w http.ResponseWriter, r *http.Request) {
 	// set seesion cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:  "sessionID",
-		Value: id.String(),
+		Value: email,
 	})
 
 	// get current directory
@@ -103,23 +95,23 @@ func loginCheck(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Error parsing your values", http.StatusInternalServerError)
 		return
 	}
-	user, err := fakedb.GetUser(email)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println(err)
+	ok := fakedb.UserExists(email)
+	if !ok {
+		http.Error(w, "user does not exist", http.StatusInternalServerError)
+		log.Println("user does not exist")
 		return
 	}
 
 	http.SetCookie(w, &http.Cookie{
 		Name:  "sessionID",
-		Value: user.SessionID,
+		Value: email,
 	})
 
 	fmt.Fprintln(w, "logged in")
 }
 
 func folderExists(folder string) bool {
-	_, err := os.Stat(fmt.Sprintf("users/%v", folder))
+	_, err := os.Stat(filepath.Join("users", folder))
 	if err != nil {
 		return !os.IsNotExist(err)
 	}
@@ -130,13 +122,13 @@ func folderExists(folder string) bool {
 func imageUpload(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("image upload ")
 
-	if err := checkValidSession(r); err != nil {
+	if !validSession(r) {
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
 		return
 	}
 
-	email, _ := r.Cookie("email") // already checked for error
-	sessionID, _ := r.Cookie("sessionID")
+	e, _ := r.Cookie("sessionID") // already checked for error
+	email := e.Value
 
 	f, h, err := r.FormFile("image")
 	if err != nil {
@@ -146,63 +138,84 @@ func imageUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer f.Close()
 
-	// write file
+	//TODO check file already exists
+	// get current  directory
 	wd, err := os.Getwd()
 	if err != nil {
-		fmt.Println("Debug 1")
-		log.Println(err)
+		log.Println("Debug 1", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	//TODO check file already exists
-
-	path := filepath.Join(wd, "assets", email.Value, h.Filename)
+	path := filepath.Join(wd, "assets", email, h.Filename)
+	// create empty file
 	newfile, err := os.Create(path)
 	if err != nil {
-		fmt.Println("Debug 2")
-		log.Println(err)
+		log.Println("Debug 2", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println("Created", path)
 	defer newfile.Close()
+	// write content in new empty file you just created
 	if _, err = io.Copy(newfile, f); err != nil {
-		fmt.Println("Debug 3")
-		log.Println(err)
+		log.Println("Debug 3", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := fakedb.AddImage(email, h.Filename); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
-	data := UserDataImages{}
-	data.TopMessage = "nada di importante"
-	data.User = User{"mastodilu", email.Value, sessionID.Value}
-	data.ImagePaths = []string{filepath.Join("assets", email.Value, "1.jpeg")}
+	// add image to user struct
+	user, err := fakedb.GetUser(email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	data := UserDataImages{"foto caricate!", user, user.Images}
 
 	tpl.ExecuteTemplate(w, "user.gohtml", data)
 }
 
 // userblog mostra la pagina del blog di un utente
 func userblog(w http.ResponseWriter, r *http.Request) {
-	//TODO check valid session
-	userIndex := 0
-	data := Data{TopMessage: "un messaggio di alert a caso", User: users[userIndex]}
-	fmt.Println(data)
+	if !validSession(r) {
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
+	splitted := strings.Split(r.URL.Path, "/")
+	l := len(splitted)
+	if l < 2 {
+		msg := fmt.Sprintf("there's a problem splitting this URL: %v", splitted)
+		http.Error(w, msg, http.StatusInternalServerError)
+		log.Println(msg)
+		return
+	}
+
+	user, err := fakedb.GetUser(splitted[len(splitted)-1])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	data := UserDataImages{TopMessage: "un messaggio di alert a caso", User: user}
 	tpl.ExecuteTemplate(w, "user.gohtml", data) // users[userIndex]
 }
 
 // checkValidSession controlla che la sessione sia attiva:
 // controlla che ci sia il cookie di sessione e che sia valido
 // TODO controlla la registrazione nel database
-func checkValidSession(r *http.Request) error {
-
-	if _, err := r.Cookie("sessionID"); err != nil {
-		return err
+func validSession(r *http.Request) bool {
+	email, err := r.Cookie("sessionID")
+	if err != nil {
+		return false
 	}
 
-	if _, err := r.Cookie("email"); err != nil {
-		return err
-	}
-	return nil
+	return fakedb.UserExists(email.Value)
 }
 
 func init() {
@@ -210,7 +223,6 @@ func init() {
 
 }
 
-var users []User
 var tpl *template.Template
 
 func main() {
