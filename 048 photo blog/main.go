@@ -9,8 +9,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"./fakedb"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // UserDataImages contiene le informazioni da passare alla pagina user.gohtml
@@ -223,9 +225,28 @@ func init() {
 
 }
 
-var tpl *template.Template
+var (
+	tpl   *template.Template
+	dbURL string
+)
 
 func main() {
+
+	fmt.Println("Please enter DB password:")
+
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		log.Fatal(err)
+	}
+	password := string(bytePassword)
+	dbURL = fmt.Sprintf("root:%v@/fakeblog?charset=utf8", password)
+
+	if err := fakedb.InitDB(dbURL); err != nil {
+		log.Fatal("can't connect to DB")
+	}
+	defer fakedb.Close()
+
+	fmt.Println("DB open")
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.Handle("/assets/", http.FileServer(http.Dir("."))) // invia il contenuto della cartella assets!!!
