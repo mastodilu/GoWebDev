@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"../02 JSON/models"
 )
 
 func index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
